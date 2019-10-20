@@ -1,0 +1,16 @@
+# meant to be run on the intel nuc nas
+version: '2.1'
+
+services:
+  telegrambot:
+    build: .
+    container_name: telegrambot
+    environment:
+      TELEGRAM_API_TOKEN="${TELEGRAM_API_TOKEN}"
+      MQTT_TELE_USERNAME="${MQTT_TELE_USERNAME}"
+      MQTT_TELE_PASS="${MQTT_TELE_PASS}"
+    user: "1000:1000"
+    volumes:
+      - /extra/appdata/telegrambot/conf:/opt/tel2mqtt/conf
+    restart:
+      always
