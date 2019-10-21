@@ -6,12 +6,49 @@
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram.ext import Updater
+from pydub import AudioSegment
 import paho.mqtt.client as mqtt
 from threading import Thread
 from Queue import Queue
 
-import logging, time, sys, yaml, os, re
+import logging, time, sys, yaml, os, os.path, re
 import SimpleHTTPServer, SocketServer
+import boto3
+from botocore.exceptions import ClientError
+
+def get_s3_keys(bucket):
+    s_3 = boto3.client('s3')
+    """Get a list of keys in an S3 bucket."""
+    keys = []
+    resp = s_3.list_objects_v2(Bucket=bucket)
+    for obj in resp['Contents']:
+        file_name, file_extension  = os.path.splitext(obj['Key'])
+        if file_extension == ".mp3":
+            keys.append(obj['Key'])
+    return keys
+
+def upload_file(file_name, bucket, object_name=None):
+    """Upload a file to an S3 bucket
+
+    :param file_name: File to upload
+    :param bucket: Bucket to upload to
+    :param object_name: S3 object name. If not specified then same as file_name
+    :return: True if file was uploaded, else False
+    """
+
+    # If S3 object_name was not specified, use file_name
+    if object_name is None:
+        object_name = file_name
+
+    # Upload the file
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
+
 
 path_matcher = re.compile(r'\$\{([^}^{]+)\}')
 def path_constructor(loader, node):
@@ -105,16 +142,32 @@ class TelegramBot(object):
         user_id = update.message.from_user.id
         message_id = update.message.message_id
         chat_id = update.message.chat_id
+        test_bucket_name = 'rpodcast-snippets-audio'
+        s3_files = get_s3_keys(test_bucket_name)
         if cfg["allowed_contacts"] and (user_id in cfg["allowed_contacts"].keys()):
             username = cfg["allowed_contacts"][user_id]
             # Downloading Voice
             newfile = bot.get_file(update.message.voice.file_id)
             filename = time.strftime("%Y-%m-%d_%H-%M") + '_' + str(user_id) + '.ogg'
+            mp3_filename = os.path.splitext(os.path.basename(filename))[0] + '.mp3'
             newfile.download(filename)
             fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + filename
 
             #bot.send_message(chat_id="@rpodcast_snips", text="I got the voice message!")
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
+
+            # convert to mp3
+            AudioSegment.from_file(filename).export(mp3_filename, format='mp3')
+
+            # upload to s3
+            if (mp3_filename in s3_files):
+                logging.info("File already exists in s3")
+            else:
+                success = upload_file(mp3_filename, test_bucket_name)
+                if success:
+                    logging.info(f'Added {mp3_filename} to {test_bucket_name}')
+            
+            # update mqtt
             self.myqueue.put({"type": "voice",
                               "message_id": message_id,
                               "user": username,
