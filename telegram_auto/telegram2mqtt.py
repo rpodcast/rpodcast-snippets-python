@@ -165,7 +165,7 @@ class TelegramBot(object):
             else:
                 success = upload_file(mp3_filename, test_bucket_name)
                 if success:
-                    logging.info(f'Added {mp3_filename} to {test_bucket_name}')
+                    logging.info("Added file to s3")
             
             # update mqtt
             self.myqueue.put({"type": "voice",
