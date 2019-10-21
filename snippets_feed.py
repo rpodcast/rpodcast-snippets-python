@@ -5,10 +5,14 @@ import logging
 from feedgen.feed import FeedGenerator
 
 music_dir = '/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/'  # Path where the videos are located
-my_files = os.listdir(music_dir)
+my_files = glob.glob("/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/*.mp3")
 print(my_files)
-my_files.sort(key=os.path.getmtime, reverse=True)
-print(my_files)
+
+my_files.sort(key=os.path.getmtime)
+
+for file in my_files:
+    print(file)
+
 
 
 fg = FeedGenerator()
@@ -44,11 +48,11 @@ fg.podcast.itunes_summary('Musings on R, open-source, and life')
 # fe.itunes_subtitle("Short snippet!")
 
 
-for (audio_file in my_files):
-    if audio_file.endswith(".mp3")
+#for (audio_file in my_files):
+#    if audio_file.endswith(".mp3")
 
 
 
-fg.rss_str(pretty=True)
-fg.rss_file('rsnippets.xml')
+#fg.rss_str(pretty=True)
+#fg.rss_file('rsnippets.xml')
 
