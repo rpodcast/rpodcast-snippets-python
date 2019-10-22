@@ -144,20 +144,31 @@ class TelegramBot(object):
         chat_id = update.message.chat_id
         test_bucket_name = 'rpodcast-snippets-audio'
         s3_files = get_s3_keys(test_bucket_name)
+        n_files = len(s3_files)
+
+        # define episode index 
+        episode_int = n_files + 1
+        episode_index = str(episode_int).zfill(3)
+
         if cfg["allowed_contacts"] and (user_id in cfg["allowed_contacts"].keys()):
             username = cfg["allowed_contacts"][user_id]
             # Downloading Voice
             newfile = bot.get_file(update.message.voice.file_id)
-            filename = time.strftime("%Y-%m-%d_%H-%M") + '_' + str(user_id) + '.ogg'
-            mp3_filename = os.path.splitext(os.path.basename(filename))[0] + '.mp3'
-            newfile.download(filename)
+
+            # generate file with episode index +1 over the current list of available files
+            #filename = time.strftime("%Y-%m-%d_%H-%M") + '_' + str(user_id) + '.ogg'
+            filename_main = 'rsnippet' + episode_index + time.strftime("%Y-%m-%d_%H-%M")
+            ogg_filename = filename_main + '.ogg'
+            mp3_filename = filename_main + '.mp3'
+            #mp3_filename = os.path.splitext(os.path.basename(filename))[0] + '.mp3'
+            newfile.download(ogg_filename)
             fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + filename
 
             #bot.send_message(chat_id="@rpodcast_snips", text="I got the voice message!")
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
 
             # convert to mp3
-            AudioSegment.from_file(filename).export(mp3_filename, format='mp3')
+            AudioSegment.from_file(ogg_filename).export(mp3_filename, format='mp3')
 
             # upload to s3
             if (mp3_filename in s3_files):
