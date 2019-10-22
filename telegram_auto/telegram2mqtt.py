@@ -149,6 +149,10 @@ class TelegramBot(object):
         # define episode index 
         episode_int = n_files + 1
         episode_index = str(episode_int).zfill(3)
+        episode_title = "R-Podcast Snippet #" + episode_index
+        episode_summary = "R-Podcast Snippet {episode_index} recorded by Eric Nantz. I wish I could give an actual description, but Eric's bot wrote this summary!".format(episode_index = episode_index)
+        episode_timestamp = time.strftime("%Y-%m-%d_%H-%M")
+
 
         if cfg["allowed_contacts"] and (user_id in cfg["allowed_contacts"].keys()):
             username = cfg["allowed_contacts"][user_id]
@@ -163,6 +167,9 @@ class TelegramBot(object):
             #mp3_filename = os.path.splitext(os.path.basename(filename))[0] + '.mp3'
             newfile.download(ogg_filename)
             fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + ogg_filename
+
+            # assemble URL for item in amazon bucket
+            s3_url = "https://" + test_bucket_name + ".s3.amazonaws.com/" + mp3_filename
 
             #bot.send_message(chat_id="@rpodcast_snips", text="I got the voice message!")
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
