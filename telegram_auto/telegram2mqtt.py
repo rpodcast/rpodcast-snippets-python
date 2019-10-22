@@ -15,6 +15,34 @@ import logging, time, sys, yaml, os, os.path, re
 import SimpleHTTPServer, SocketServer
 import boto3
 from botocore.exceptions import ClientError
+from boto3 import resource
+from boto3.dynamodb.conditions import Key
+
+# The boto3 dynamoDB resource
+dynamodb_resource = resource('dynamodb')
+
+def get_table_metadata(table_name):
+    """
+    Get some metadata about chosen table.
+    """
+    table = dynamodb_resource.Table(table_name)
+
+    return {
+        'num_items': table.item_count,
+        'primary_key_name': table.key_schema[0],
+        'status': table.table_status,
+        'bytes_size': table.table_size_bytes,
+        'global_secondary_indices': table.global_secondary_indexes
+    }
+
+def add_item(table_name, col_dict):
+    """
+    Add one item (row) to table. col_dict is a dictionary {col_name: value}.
+    """
+    table = dynamodb_resource.Table(table_name)
+    response = table.put_item(Item=col_dict)
+
+    return response
 
 def get_s3_keys(bucket):
     s_3 = boto3.client('s3')
@@ -184,6 +212,20 @@ class TelegramBot(object):
                 success = upload_file(mp3_filename, test_bucket_name)
                 if success:
                     logging.info("Added file to s3")
+                    # TODO: add to dynamo db table
+                    episode_dict = {
+                        'episode_id': filename_main,
+                        'episode_int': episode_int,
+                        'episode_index': episode_index,
+                        'episode_title': episode_title,
+                        'episode_summary': episode_summary,
+                        'episode_timestamp': episode_timestamp,
+                        'episode_url': s3_url
+                    }
+                    dbsuccess = add_item(table_name = 'rpodcast-snippets-db', col_dict = episode_dict)
+                    if dbsuccess:
+                        logging.info("Added entry to dynamodb")
+
             
             # update mqtt
             self.myqueue.put({"type": "voice",
