@@ -203,6 +203,9 @@ class TelegramBot(object):
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
 
             # convert to mp3
+            # first obtain the length of the segment in milliseconds
+            audio = AudioSegment.from_file(ogg_filename)
+            episode_ms = len(audio)
             AudioSegment.from_file(ogg_filename).export(mp3_filename, format='mp3')
 
             # upload to s3
@@ -220,6 +223,7 @@ class TelegramBot(object):
                         'episode_title': episode_title,
                         'episode_summary': episode_summary,
                         'episode_timestamp': episode_timestamp,
+                        'episode_ms': episode_ms,
                         'episode_url': s3_url
                     }
                     dbsuccess = add_item(table_name = 'rpodcast-snippets-db', col_dict = episode_dict)
