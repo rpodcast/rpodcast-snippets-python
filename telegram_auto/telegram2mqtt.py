@@ -19,7 +19,7 @@ from boto3 import resource
 from boto3.dynamodb.conditions import Key
 
 # The boto3 dynamoDB resource
-dynamodb_resource = resource('dynamodb')
+dynamodb_resource = resource('dynamodb', region_name='us-east-1')
 
 def get_table_metadata(table_name):
     """
