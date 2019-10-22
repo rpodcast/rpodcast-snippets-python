@@ -157,12 +157,12 @@ class TelegramBot(object):
 
             # generate file with episode index +1 over the current list of available files
             #filename = time.strftime("%Y-%m-%d_%H-%M") + '_' + str(user_id) + '.ogg'
-            filename_main = 'rsnippet' + episode_index + time.strftime("%Y-%m-%d_%H-%M")
+            filename_main = 'rsnippet' + episode_index + '_' + time.strftime("%Y-%m-%d_%H-%M")
             ogg_filename = filename_main + '.ogg'
             mp3_filename = filename_main + '.mp3'
             #mp3_filename = os.path.splitext(os.path.basename(filename))[0] + '.mp3'
             newfile.download(ogg_filename)
-            fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + filename
+            fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + ogg_filename
 
             #bot.send_message(chat_id="@rpodcast_snips", text="I got the voice message!")
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
