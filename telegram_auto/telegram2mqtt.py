@@ -212,7 +212,7 @@ class TelegramBot(object):
             if (mp3_filename in s3_files):
                 logging.info("File already exists in s3")
             else:
-                success = upload_file(mp3_filename, test_bucket_name)
+                success = upload_file(mp3_filename, test_bucket_name, object_name = 'source/' + mp3_filename)
                 if success:
                     logging.info("Added file to s3")
                     # TODO: add to dynamo db table
