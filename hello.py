@@ -7,6 +7,16 @@ from pydub import AudioSegment
 import boto3
 from botocore.exceptions import ClientError
 
+def get_s3_keys2(bucket):
+    s_3 = boto3.client('s3')
+    """Get a list of keys in an S3 bucket."""
+    keys = []
+    resp = s_3.list_objects_v2(Bucket=bucket, Prefix='source')
+    for obj in resp['Contents']:
+        file_name, file_extension  = os.path.splitext(obj['Key'])
+        keys.append(obj['Key'])
+    return keys
+
 def get_s3_keys(bucket):
     s_3 = boto3.client('s3')
     """Get a list of keys in an S3 bucket."""
@@ -63,15 +73,17 @@ def upload_file(file_name, bucket, object_name=None):
     return True
 
 
-music_dir = '/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/'  # Path where the videos are located
+#music_dir = '/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/'  # Path where the videos are located
 #print(os.listdir(music_dir))
-my_files = os.listdir(music_dir)
+#my_files = os.listdir(music_dir)
 test_bucket_name = 'rpodcast-snippets-audio'
 
-s3_files = get_s3_keys(test_bucket_name)
+print(get_s3_keys2(test_bucket_name))
+
+upload_file('telegram_auto/eric-notes.md', test_bucket_name, object_name = 'source/eric-notes.md')
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG,
+""" logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s: %(message)s')
 
 os.chdir(music_dir)
@@ -93,4 +105,4 @@ for oggfile in my_files:
 
 
 msg = "Hello World"
-print(msg)
+print(msg) """
