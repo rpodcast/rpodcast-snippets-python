@@ -1,41 +1,60 @@
 import os
 import glob
 import logging
+import boto3
 
 from feedgen.feed import FeedGenerator
+from boto3.dynamodb.conditions import Key, Attr
 
-music_dir = '/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/'  # Path where the videos are located
-my_files = glob.glob("/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/*.mp3")
-print(my_files)
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('rpodcast-snippets-db')
 
-my_files.sort(key=os.path.getmtime)
+# extract current records from dynamodb
+response = table.scan(
+    FilterExpression=Attr('episode_int').gte(1)
+)
 
-for file in my_files:
-    print(file)
+items = response['Items']
+#print(items)
+
+len(items)
+
+for x in range(len(items)):
+    print(items[x]['episode_url'])
+
+
+#music_dir = '/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/'  # Path where the videos are located
+#my_files = glob.glob("/home/eric/rpodcast_code/rpodcast-snippets-python/ogg_source/*.mp3")
+#print(my_files)
+
+#my_files.sort(key=os.path.getmtime)
+
+#for file in my_files:
+#    print(file)
 
 
 
-fg = FeedGenerator()
+#fg = FeedGenerator()
 
 
 # general feed params
-fg.id('https://r-podcast.org')
-fg.title('R-Snippets')
-fg.author( {'name':'Eric Nantz', 'email':'thercast@gmail.com'})
-fg.link(href='https://r-podcast.org', rel='alternate' )
-fg.logo('https://imgur.com/Mr70QS9')
-fg.subtitle('Musings on R, open-source, and life')
-fg.link( href='https://r-podcast.org/rsnippets.xml', rel='self')
-fg.language('en')
+#fg.id('https://r-podcast.org')
+#fg.title('R-Snippets')
+#fg.author( {'name':'Eric Nantz', 'email':'thercast@gmail.com'})
+#fg.link(href='https://r-podcast.org', rel='alternate' )
+#fg.logo('https://imgur.com/Mr70QS9')
+#fg.subtitle('Musings on R, open-source, and life')
+#fg.link( href='https://r-podcast.org/rsnippets.xml', rel='self')
+#fg.language('en')
 
-fg.load_extension('podcast')
+#fg.load_extension('podcast')
 
 # podcast-specific params
-fg.podcast.itunes_category('Technology')
-fg.podcast.itunes_author('Eric Nantz')
-fg.podcast.itunes_explicit('no')
-fg.podcast.itunes_owner('Eric Nantz', 'thercast@gmail.com')
-fg.podcast.itunes_summary('Musings on R, open-source, and life')
+#fg.podcast.itunes_category('Technology')
+#fg.podcast.itunes_author('Eric Nantz')
+#fg.podcast.itunes_explicit('no')
+#fg.podcast.itunes_owner('Eric Nantz', 'thercast@gmail.com')
+#fg.podcast.itunes_summary('Musings on R, open-source, and life')
 
 # add feed entries
 # ------------------- notes ------------------
