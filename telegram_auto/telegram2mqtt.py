@@ -55,7 +55,7 @@ def get_s3_keys(bucket):
             keys.append(obj['Key'])
     return keys
 
-def upload_file(file_name, bucket, object_name=None):
+def upload_file(file_name, bucket, object_name=None, ExtraArgs=None):
     """Upload a file to an S3 bucket
 
     :param file_name: File to upload
@@ -71,7 +71,10 @@ def upload_file(file_name, bucket, object_name=None):
     # Upload the file
     s3_client = boto3.client('s3')
     try:
-        response = s3_client.upload_file(file_name, bucket, object_name)
+        if ExtraArgs:
+            response = s3_client.upload_file(file_name, bucket, object_name, ExtraArgs=ExtraArgs)
+        else:
+            response = s3_client.upload_file(file_name, bucket, object_name)
     except ClientError as e:
         logging.error(e)
         return False
@@ -212,7 +215,13 @@ class TelegramBot(object):
             if (mp3_filename in s3_files):
                 logging.info("File already exists in s3")
             else:
-                success = upload_file(mp3_filename, test_bucket_name, object_name = 'source/' + mp3_filename)
+                success = upload_file(
+                    mp3_filename, test_bucket_name, object_name = 'source/' + mp3_filename,
+                    ExtraArgs={
+                        'ACL': 'public-read',
+                        'ContentType': 'audio/mpeg'
+                    }
+                )       
                 if success:
                     logging.info("Added file to s3")
                     # TODO: add to dynamo db table
