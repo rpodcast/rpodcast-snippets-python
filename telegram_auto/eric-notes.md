@@ -29,5 +29,22 @@ services:
 
 ```
 
+Commands to build and start container:
+
+```
+docker-compose -f docker-compose.yml build
+docker-compose -f docker-compose.yml up -d
+
+# to check logs
+docker-compose -f docker-compose.yml logs
+```
+
+Commands to stop and remove images (needed if I refresh the compose file):
+
+```
+docker-compose -f docker-compose.yml stop
+docker-compose -f docker-compose.yml rm
+```
+
 * Try doing a voice message to the bot and verify that a `.ogg` file is produced in the `/extra/appdata/telegrambot/conf/www` directory.
 
