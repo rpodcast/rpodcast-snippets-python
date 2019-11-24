@@ -173,7 +173,7 @@ class TelegramBot(object):
         user_id = update.message.from_user.id
         message_id = update.message.message_id
         chat_id = update.message.chat_id
-        test_bucket_name = 'rpodcast-snippets-audio'
+        test_bucket_name = 'rsnippets.show'
         s3_files = get_s3_keys(test_bucket_name)
         n_files = len(s3_files)
 
