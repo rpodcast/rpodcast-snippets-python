@@ -107,9 +107,9 @@ def lambda_handler(event, context):
     fg.title('Residual Snippets')
     fg.author( {'name':'Eric Nantz', 'email':'thercast@gmail.com'})
     fg.link(href='https://r-podcast.org', rel='alternate' )
-    fg.logo('https://rpodcast-snippets-audio.s3.amazonaws.com/residual_snippets.png')
+    fg.logo('https://rsnippets.show.s3.amazonaws.com/residual_snippets.png')
     fg.subtitle('Musings on R, data science, linux, and life')
-    fg.link( href='https://r-podcast.org/rsnippets.xml', rel='self')
+    fg.link( href='https://rsnippets.show.s3.amazonaws.com/residual_snippets.xml', rel='self')
     fg.language('en')
 
     fg.load_extension('podcast')
@@ -135,11 +135,13 @@ def lambda_handler(event, context):
 
     # populate xml file for RSS feed    
     feed_string = fg.rss_str(pretty=True)
-    #fg.rss_file('residual_snippets.xml', pretty=True)
+    fg.rss_file('/tmp/residual_snippets.xml', pretty=True)
 
-    # upload xml feed to pcloud
+    # upload xml feed to pcloud and s3
     pc = PyCloud(PCLOUD_USERNAME, PCLOUD_PASS)
     pc.uploadfile(data = feed_string, filename='residual_snippets.xml', folderid=PCLOUD_FOLDER_ID)
+
+    upload_file("/tmp/residual_snippets.xml", BUCKET_NAME, object_name = 'residual_snippets.xml')
 
     # create export of dynamodb and upload to s3
     # obtain all entries in database
