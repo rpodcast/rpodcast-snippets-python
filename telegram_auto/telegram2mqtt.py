@@ -180,8 +180,8 @@ class TelegramBot(object):
         # define episode index 
         episode_int = n_files + 1
         episode_index = str(episode_int).zfill(3)
-        episode_title = "R-Podcast Snippet #" + episode_index
-        episode_summary = "R-Podcast Snippet {episode_index} recorded by Eric Nantz. I wish I could give an actual description, but Eric's bot wrote this summary!".format(episode_index = episode_index)
+        episode_title = "Residual Snippet #" + episode_index
+        episode_summary = "Residual Snippet {episode_index} recorded by Eric Nantz. I wish I could give an actual description, but Eric's bot wrote this summary!".format(episode_index = episode_index)
         episode_timestamp = time.strftime("%Y-%m-%d_%H-%M")
 
 
