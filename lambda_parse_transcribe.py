@@ -3,6 +3,7 @@ import os
 import urllib.request
 import re
 import boto3
+import decimal
 
 from feedgen.feed import FeedGenerator
 from boto3.dynamodb.conditions import Key, Attr
@@ -18,6 +19,11 @@ transcribe = boto3.client('transcribe')
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('rpodcast-snippets-db')
+
+def decimal_default(obj):
+    if isinstance(obj, decimal.Decimal):
+        return int(obj)
+    raise TypeError
 
 def create_summary(text, n_sentences=4):
     #  https://stackoverflow.com/a/17124446
@@ -131,10 +137,28 @@ def lambda_handler(event, context):
     feed_string = fg.rss_str(pretty=True)
     #fg.rss_file('residual_snippets.xml', pretty=True)
 
-    # upload to pcloud
+    # upload xml feed to pcloud
     pc = PyCloud(PCLOUD_USERNAME, PCLOUD_PASS)
     pc.uploadfile(data = feed_string, filename='residual_snippets.xml', folderid=PCLOUD_FOLDER_ID)
 
+    # create export of dynamodb and upload to s3
+    # obtain all entries in database
+    response2 = table.scan(
+        FilterExpression=Attr('episode_int').gte(1)
+    )
+
+    # save object with the items themselves
+    items2 = response2['Items']
+
+    items2_sorted = sorted(items2, key = lambda i: i['episode_int'])
+
+    db_export = "/tmp/dbexport.json"
+    f = open(db_export, "w")
+    f.write(json.dumps(items2_sorted, indent=2, default=decimal_default))
+    f.close()
+
     # upload to s3 bucket
-    #success = upload_file('residual_snippets.xml', BUCKET_NAME, object_name = 'residual_snippets.xml')
+    success = upload_file(db_export, BUCKET_NAME, object_name = 'dbexport.json')
+    #with open(db_export, "rb") as f:
+    #    s3.upload_fileobj(f, BUCKET_NAME, "dbexport.json")
 
