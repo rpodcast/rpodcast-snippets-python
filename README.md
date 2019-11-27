@@ -1,3 +1,11 @@
+## Residual Snippets Podcast
+
+### Acknowledgements (to clean up later)
+
+* https://github.com/sonicnkt/telegram2mqtt
+* Telecast with Popey
+* Jupiter Broadcasting / Linux Academy
+
 Notes on getting the lambda layer with feedgen working
 * Create a cloud9 instance on AWS and load the lambda function
 * Follow [this guide](https://aws.amazon.com/premiumsupport/knowledge-center/cloud9-deploy-lambda-external-libraries/) on the AWS docs to install `lxml` first, then install the remaining modules like `feedgen` and `pcloud`.
