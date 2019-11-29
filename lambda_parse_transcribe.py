@@ -119,7 +119,7 @@ def lambda_handler(event, context):
     fg.podcast.itunes_author('Eric Nantz')
     fg.podcast.itunes_explicit('no')
     fg.podcast.itunes_owner('Eric Nantz', 'thercast@gmail.com')
-    fg.podcast.itunes_summary('R-Snippets is an informal, unedited, and free-flowing audio podcast from Eric Nantz.  If you enjoy hearing quick takes from a data scientist on their journey to blend innovative uses of open-source technology, contributing back to their brilliant communities, and juggling the curveballs life throws at them, this podcast is for you!')
+    fg.podcast.itunes_summary('Reisdual Snippets is an informal, unedited, and free-flowing audio podcast from Eric Nantz.  If you enjoy hearing quick takes from a data scientist on their journey to blend innovative uses of open-source technology, contributing back to their brilliant communities, and juggling the curveballs life throws at them, this podcast is for you!')
     
     for x in range(len(items_sorted)):
         #print(items[x])
@@ -132,7 +132,7 @@ def lambda_handler(event, context):
         ep_desc = create_summary(items_sorted[x]['episode_summary'])
         #fe.description(items_sorted[x]['episode_summary'])
         fe.description(ep_desc)
-
+ 
     # populate xml file for RSS feed    
     feed_string = fg.rss_str(pretty=True)
     fg.rss_file('/tmp/residual_snippets.xml', pretty=True)
