@@ -200,8 +200,8 @@ class TelegramBot(object):
             fileurl = "http://" + self.web_name + ":{}/".format(str(self.web_port)) + ogg_filename
 
             # assemble URL for item in amazon bucket
-            s3_url = "https://" + test_bucket_name + ".s3.amazonaws.com/source/" + mp3_filename
-
+            #s3_url = "https://" + test_bucket_name + ".s3.amazonaws.com/source/" + mp3_filename
+            s3_url = "https://s3.amazonaws.com/" + test_bucket_name + "/source/" + mp3_filename
             #bot.send_message(chat_id="@rpodcast_snips", text="I got the voice message!")
             bot.forward_message(chat_id="@rpodcast_snips", from_chat_id = chat_id, message_id = message_id)
 
