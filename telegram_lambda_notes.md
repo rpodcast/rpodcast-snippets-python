@@ -22,3 +22,6 @@ JSON response from calling `getFile` API endpoint based on file id:
 {'ok': True, 'result': {'file_id': 'AwADAQAD3AADFQ7BRB3KLyG3YLtVFgQ', 'file_unique_id': 'AgAD3AADFQ7BRA', 'file_size': 12501, 'file_path': 'voice/file_6.oga'}}
 ```
 
+Forwarding the message to the actual residual snippets channel:
+
+* I got it working, but the key step is to make sure the bot is added as an admin to the residual snippets channel first!
