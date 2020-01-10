@@ -107,9 +107,9 @@ def lambda_handler(event, context):
     fg.title('Residual Snippets')
     fg.author( {'name':'Eric Nantz', 'email':'thercast@gmail.com'})
     fg.link(href='https://r-podcast.org', rel='alternate' )
-    fg.logo('https://rsnippets.show.s3.amazonaws.com/residual_snippets.png')
+    fg.logo('http://rsnippets.show.s3.amazonaws.com/residual_snippets.png')
     fg.subtitle('Musings on R, data science, linux, and life')
-    fg.link( href='https://rsnippets.show.s3.amazonaws.com/residual_snippets.xml', rel='self')
+    fg.link( href='https://filedn.com/lXHQDOYF1yHVL1Tsc38wxx7/site/residual_snippets.xml', rel='self')
     fg.language('en')
 
     fg.load_extension('podcast')
@@ -119,7 +119,7 @@ def lambda_handler(event, context):
     fg.podcast.itunes_author('Eric Nantz')
     fg.podcast.itunes_explicit('no')
     fg.podcast.itunes_owner('Eric Nantz', 'thercast@gmail.com')
-    fg.podcast.itunes_summary('Reisdual Snippets is an informal, unedited, and free-flowing audio podcast from Eric Nantz.  If you enjoy hearing quick takes from a data scientist on their journey to blend innovative uses of open-source technology, contributing back to their brilliant communities, and juggling the curveballs life throws at them, this podcast is for you!')
+    fg.podcast.itunes_summary('Residual Snippets is an informal, unedited, and free-flowing audio podcast from Eric Nantz.  If you enjoy hearing quick takes from a data scientist on their journey to blend innovative uses of open-source technology, contributing back to their brilliant communities, and juggling the curveballs life throws at them, this podcast is for you!')
     
     for x in range(len(items_sorted)):
         #print(items[x])
